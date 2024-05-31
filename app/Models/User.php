@@ -4,15 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+use App\Models\User_Otp;
+use App\Jobs\SendOtpJob;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
-
-    protected $table = "users";
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'balance',
+        'email_verified_at',
     ];
 
     /**
@@ -46,13 +47,29 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'name' => 'string',
             'email' => 'string',
-            'balance' => 'integer'
         ];
     }
 
     public function getOtp()
     {
         return $this->hasOne(User_Otp::class);
+    }
+
+    public function sendOtp(): void
+    {
+        $user_otp_existed = User_Otp::where(["user_id" => $this->id])->first();
+        if ($user_otp_existed) $user_otp_existed->delete();
+
+        $otp = rand(100000, 999999);
+        User_Otp::create([
+            "otp" => $otp,
+            "user_id" => $this->id,
+            "expire_at" => now()->addMinutes((int)env("OTP_MINUTES_EXPIRED", 1))
+        ]);
+
+        $details = ["email" => $this->email, "otp" => $otp];
+        // SendOtpJob::dispatch($details);
     }
 }

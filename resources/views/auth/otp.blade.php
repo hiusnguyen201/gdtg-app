@@ -1,4 +1,4 @@
-@extends('layouts.customer.index')
+@extends('layouts.client.index')
 @section('content')
     <section class="full-height relative no-top no-bottom vertical-center"
         data-bgimage="url(gigaland-nft/images/background/subheader.jpg) top" data-stellar-background-ratio=".5">
@@ -12,37 +12,28 @@
                             {{ env('OTP_MINUTES_EXPIRED', 1) }} phút
                         </p>
 
-                        @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
-                        @if (session('success'))
-                            <div class="alert alert-success">
-                                {{ session('success') }}
-                            </div>
-                        @endif
-
-                        <form name="contactForm" id="contact_form" class="form-border mb-3" method="post"
-                            action="{{ route('otp.verify') }}">
+                        <div class="form-border mb-3">
                             <div class="field-set mb-3">
                                 <input type="text" name="otp" id="otp" class="form-control mb-0"
                                     placeholder="Otp" />
-                                @error('otp')
-                                    <span class="d-block" style="color: red">{{ $message }}</span>
-                                @enderror
                             </div>
 
                             <div class="field-set">
                                 @csrf
-                                <button type="submit" class="btn btn-main btn-fullwidth color-2">Xác nhận</button>
+                                <button id="btnSendOtp" type="submit" class="btn btn-main btn-fullwidth color-2">Xác
+                                    nhận</button>
                             </div>
-                        </form>
+                        </div>
 
-                        <p class="mb-0">Bạn chưa nhận được mã? <a href="{{ route('otp.resend') }}">Gửi lại otp</a></p>
+                        <p class="mb-0">Bạn chưa nhận được mã? <a id="btnResendOtp" href="javascript:void(0)">Gửi lại
+                                otp</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+@endsection
+
+@section('javascript')
+    <script src="{{ asset('custom/js/auth/otp.js') }}"></script>
 @endsection
