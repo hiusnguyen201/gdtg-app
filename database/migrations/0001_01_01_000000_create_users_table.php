@@ -15,12 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('email', 150)->unique();
-            $table->string('password', 150);
-            $table->integer("balance")->default(0);
             $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
+            $table->string('password');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

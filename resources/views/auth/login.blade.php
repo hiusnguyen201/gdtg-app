@@ -1,4 +1,4 @@
-@extends('layouts.customer.index')
+@extends('layouts.client.index')
 @section('content')
     <section class="full-height relative no-top no-bottom vertical-center"
         data-bgimage="url(gigaland-nft/images/background/subheader.jpg) top" data-stellar-background-ratio=".5">
@@ -9,40 +9,31 @@
                         <h3 class="mb10 text-center">Đăng nhập</h3>
                         <p>
                             Đăng nhập bằng tài khoản đã có hoặc tạo tài khoản mới
-                            <a href="{{ route('register.index') }}">tại đây<span></span></a>.
+                            <a href="{{ route('register.render') }}">tại đây<span></span></a>.
                         </p>
-                        @if (session('error'))
-                            <div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-                        @endif
 
-                        <form name="contactForm" id="contact_form" class="form-border" method="post"
-                            action="{{ route('login.auth') }}">
-                            <div class="field-set mb-3">
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Email"
-                                    value="{{ old('email') }}" />
-
-                                @error('email')
-                                    <span class="d-block" style="color: red">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="field-set mb-3">
-                                <div class="password-block">
-                                    <input type="password" name="password" id="password" class="form-control"
-                                        placeholder="Mật khẩu" />
-                                    <i id="action-password-icon" class="fa fa-eye-slash"></i>
+                        <div class="form-border">
+                            <div class="mb-3">
+                                <div class="field-set">
+                                    <input type="email" name="email" class="form-control" placeholder="Email"
+                                        value="{{ old('email') }}" />
                                 </div>
-
-                                @error('password')
-                                    <span class="d-block" style="color: red">{{ $message }}</span>
-                                @enderror
                             </div>
+                            <div class="mb-3">
+                                <div class="field-set">
+                                    <div class="password-block">
+                                        <input type="password" name="password" class="form-control"
+                                            placeholder="Mật khẩu" />
+                                        <i id="action-password-icon" class="fa fa-eye-slash"></i>
+                                    </div>
+                                </div>
+                            </div>
+
 
                             <div class="field-set">
-                                @csrf
-                                <button type="submit" class="btn btn-main btn-fullwidth color-2">Đăng nhập bằng
-                                    email</button>
+                                <button id="btnLocalLogin" type="submit" class="btn btn-main btn-fullwidth color-2">Đăng
+                                    nhập
+                                    bằng email</button>
                             </div>
 
                             <div class="clearfix"></div>
@@ -79,10 +70,14 @@
                                 </div>
                             </div>
                             <!-- social icons close -->
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+@endsection
+
+@section('javascript')
+    <script src="{{ asset('custom/js/auth/login.js') }}"></script>
 @endsection

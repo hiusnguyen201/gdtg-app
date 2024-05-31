@@ -2,30 +2,29 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Middleware\AuthMiddleware;
+use App\Http\Middleware\GuestMiddleware;
+use App\Http\Middleware\TokenMiddleware;
 
-Route::prefix("login")->name("login.")->group(function () {
-    Route::get('', [AuthController::class, "loginPage"])->name("index");
-    Route::post('', [AuthController::class, "handleLocalLogin"])->name("auth");
+Route::middleware(GuestMiddleware::class)->group(function () {
+    Route::get("/login", [AuthController::class, "loginPage"])->name("login.render");
+    Route::get("/register", [AuthController::class, "registerPage"])->name("register.render");
 });
 
-Route::prefix("otp")->name("otp.")->group(function () {
-    Route::get('', [AuthController::class, "otpPage"])->name("index");
-    Route::post('', [AuthController::class, "handleVerifyOtp"])->name("verify");
-    Route::get("resend", [AuthController::class, "handleResendOtp"])->name("resend");
+Route::prefix("otp")->middleware([AuthMiddleware::class])->group(function () {
+    Route::get("/", [AuthController::class, "otpPage"])->name("otp.render");
 });
 
-Route::prefix("logout")->group(function () {
-    Route::get('', [AuthController::class, "handleLogout"])->name("logout");
-});
+Route::get("/", [HomeController::class, "homePage"])->name("home.render");
 
-Route::prefix("register")->name("register.")->group(function () {
-    Route::get('', [AuthController::class, "registerPage"])->name("index");
+Route::middleware([TokenMiddleware::class])->group(function () {
+    Route::get("/buyer-create", [HomeController::class, "buyerCreatePage"])->name("buyerCreate.render");
+    Route::get("/seller-create", [HomeController::class, "sellerCreatePage"])->name("sellerCreate.render");
 });
-
-Route::get('/', [AuthController::class, "homePage"])->name("home.index");
 
 /*
-    $phone = "+84383460015";
+    $phone = "+84383460015";                                qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq`
 
 $curl = curl_init();
 curl_setopt_array($curl, array(
