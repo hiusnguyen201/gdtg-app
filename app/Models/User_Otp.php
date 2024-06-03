@@ -15,6 +15,7 @@ class User_Otp extends Model
         'otp',
         'user_id',
         'expire_at',
+        'token'
     ];
 
     protected function casts(): array
@@ -23,11 +24,12 @@ class User_Otp extends Model
             'otp' => 'string',
             'user_id' => 'integer',
             'expire_at' => 'datetime',
+            'token' => 'string'
         ];
     }
 
-    public function user()
+    public function getUser()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, "user_id");
     }
 }

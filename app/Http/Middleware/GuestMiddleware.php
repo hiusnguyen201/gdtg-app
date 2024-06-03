@@ -5,8 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use App\Models\User;
+use App\Models\Sanctum\PersonalAccessToken;
 
 class GuestMiddleware
 {
@@ -17,20 +16,19 @@ class GuestMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!isset($_COOKIE['user'])) return $next($request);
+        if (!isset($_COOKIE['token'])) return $next($request);
 
         try {
-            $id = decrypt($_COOKIE['user']);
-            $user = User::find($id);
+            $tokenFull = decrypt($_COOKIE['token']);
+            $personalAccessToken = PersonalAccessToken::findToken($tokenFull);
 
-            if (!$user) {
-                throw new \Exception("User not found");
+            if (!$personalAccessToken) {
+                return $next($request);
             }
 
             return redirect()->back();
         } catch (\Exception $e) {
-            setcookie('user', '', -1, '/');
-            return redirect()->route("login.render");
+            return $next($request);
         }
     }
 }

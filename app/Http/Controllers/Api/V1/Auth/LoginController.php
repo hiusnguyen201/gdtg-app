@@ -14,13 +14,14 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    const MESSAGE = [
+    private array $MESSAGE = [
         'INCORRECT_CREDENTIALS' => "Thông tin đăng nhập không chính xác",
         'LOGIN_FAILED' => "Đăng nhập thất bại",
         'LOGIN_SUCCESSFUL' => "Đăng nhập thành công",
-        'INVALID_OTP' => "Otp không hợp lệ",
-        'EXPIRED_OTP' => "Otp đã hết hạn",
+        'INVALID_OTP' => "Otp không hợp lệ hoặc đã hết hạn",
+        'TOKEN_OTP_INVALID' => "Token otp không hợp lệ",
         'RESEND_OTP_SUCCESSFUL' => "Gửi lại otp thành công",
+        'RESEND_OTP_FAILED' => "Gửi lại otp không thành công",
         'VERIFY_OTP_FAILED' => 'Xác thực otp thất bại',
         "INFO_VERIFY_OTP" => 'Vui lòng xác minh OTP để hoàn tất quá trình đăng nhập',
         "USER_NOT_FOUND" => "Người dùng không tìm thấy"
@@ -28,114 +29,92 @@ class LoginController extends Controller
 
     public function localLogin(LocalLoginRequest $request)
     {
+        $credentials = array(
+            "email" => $request->email,
+            "password" => $request->password
+        );
+
+        if (!auth()->attempt($credentials)) {
+            return response()->json([
+                'status' => 'error',
+                'type' => 'handle',
+                'msg' => $this->MESSAGE['INCORRECT_CREDENTIALS'],
+            ], 401);
+        }
+
+        $user = User::where("email", $request->email)->first();
+        $otpToken = $user->generateOtpToken();
+
         try {
-            $credentials = array(
-                "email" => $request->email,
-                "password" => $request->password
-            );
-
-            if (!auth()->attempt($credentials)) {
-                return response()->json([
-                    'status' => 'error',
-                    'type' => 'handle',
-                    'msg' => self::MESSAGE['INCORRECT_CREDENTIALS'],
-                ], 401);
-            }
-
-            $user = User::where("email", $request->email)->first();
-            $user->sendOtp();
+            $user_otp = $user->createOtp($otpToken);
+            $user->sendOtp($user_otp->otp);
 
             return response()->json([
                 'status' => 'success',
-                'type' => 'verify',
-                'msg' => self::MESSAGE['INFO_VERIFY_OTP'],
-                'url' => route("otp.render"),
-                'data' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'id' => $user->id,
-                ]
-            ], 200)->cookie("user", encrypt(auth()->id()));
+                'msg' => $this->MESSAGE['INFO_VERIFY_OTP'],
+                'url' => route("otp.render") . "?token=" . $user_otp->id . "|" . $otpToken,
+            ], 200);
         } catch (\Exception $e) {
             auth()->logout();
             return response()->json([
                 'status' => 'error',
                 'type' => 'exception',
-                'msg' => self::MESSAGE['LOGIN_FAILED'],
+                'msg' => $this->MESSAGE['LOGIN_FAILED'],
             ], 500);
         }
     }
 
     public function verifyOtp(VerifyOtpRequest $request)
     {
+        [$id, $token] = explode("|", $request->token, 2);
+        $user_otp = User_Otp::find($id);
+        $user = $user_otp->getUser;
+
         try {
-            $otp = User_Otp::where([
-                "user_id" => $request->userId,
-                "otp" => $request->otp,
-            ])->first();
-
-            if (!$otp) {
+            [$status, $data] = $user->verifyOtp($request->otp);
+            if (!$status) {
                 return response()->json([
                     'status' => 'error',
-                    'type' => 'handle',
-                    'msg' => self::MESSAGE['INVALID_OTP'],
-                ], 404);
-            }
-
-            if (now()->gt($otp->expire_at)) {
-                $otp->delete();
-                return response()->json([
-                    'status' => 'error',
-                    'type' => 'handle',
-                    'msg' => self::MESSAGE['EXPIRED_OTP']
+                    'msg' => $this->MESSAGE['INVALID_OTP'],
+                    ...$data
                 ], 401);
             }
 
-            $user = $otp->user;
-            if (!$user->email_verified_at) {
-                $user->update([
-                    'email_verified_at' => now()
-                ]);
-            }
-
-            $otp->delete();
-
             $user->tokens()->delete();
             $token = $user->createToken("API TOKEN")->plainTextToken;
-            setcookie('user', '', -1, '/');
 
             return response()->json([
                 'status' => 'success',
-                'type' => 'handle',
-                'msg' => self::MESSAGE['LOGIN_SUCCESSFUL'],
+                'msg' => $this->MESSAGE['LOGIN_SUCCESSFUL'],
                 'url' => "/",
             ], 200)->cookie("token", encrypt($token));
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'type' => 'exception',
-                'msg' => self::MESSAGE['VERIFY_OTP_FAILED'],
-                'something' => $e->getMessage()
+                'msg' => $this->MESSAGE['VERIFY_OTP_FAILED'],
             ], 500);
         }
     }
 
     public function resendOtp(ResendOtpRequest $request)
     {
-        $user = User::find($request->userId);
-        if (!$user) {
+        [$id, $token] = explode("|", $request->token, 2);
+        $user_otp = User_Otp::find($id);
+        $user = $user_otp->getUser;
+
+        try {
+            $user->resendOtp();
+
             return response()->json([
-                'status' => 'error',
-                'type' => 'handle',
-                'msg' => self::MESSAGE['USER_NOT_FOUND'],
-            ], 404);
+                'status' => 'success',
+                'msg' => $this->MESSAGE['RESEND_OTP_SUCCESSFUL'],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'success',
+                'msg' => $this->MESSAGE['RESEND_OTP_FAILED'],
+            ], 200);
         }
-
-        $user->sendOtp();
-
-        return response()->json([
-            'status' => 'success',
-            'msg' => self::MESSAGE['RESEND_OTP_SUCCESSFUL'],
-        ], 200);
     }
 }

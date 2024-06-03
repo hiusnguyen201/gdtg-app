@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Rules\ExistTokenOtp;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -25,12 +26,12 @@ class VerifyOtpRequest extends FormRequest
     public function rules(Request $request): array
     {
         return [
-            "userId" => "required|integer|min:1",
             "otp" => [
                 "required",
                 "integer",
                 "min:6",
             ],
+            "token" => ["required", new ExistTokenOtp]
         ];
     }
 
@@ -40,9 +41,7 @@ class VerifyOtpRequest extends FormRequest
             "otp.required" => ":attribute không được để trống",
             "otp.integer" => ":attribute không đúng định dạng",
             "otp.min" => ":attribute không đúng định dạng",
-            "userId.required" => ":attribute không được để trống",
-            "userId.string" => ":attribute không tìm thấy",
-            "userId.max" => ":attribute không tìm thấy",
+            "token.required" => ":attribute không được để trống"
         ];
     }
 
@@ -50,7 +49,7 @@ class VerifyOtpRequest extends FormRequest
     {
         return [
             "otp" => "Mã xác thực",
-            "userId" => "Người dùng",
+            "token" => "Token"
         ];
     }
 

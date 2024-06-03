@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+use Illuminate\Support\Str;
 use App\Models\User_Otp;
 use App\Jobs\SendOtpJob;
 
@@ -57,19 +58,72 @@ class User extends Authenticatable
         return $this->hasOne(User_Otp::class);
     }
 
-    public function sendOtp(): void
+    public function generateOtpToken()
     {
-        $user_otp_existed = User_Otp::where(["user_id" => $this->id])->first();
-        if ($user_otp_existed) $user_otp_existed->delete();
+        return
+            sprintf('%s%s%s', '', $tokenEntropy = Str::random(40), hash('crc32b', $tokenEntropy));
+    }
 
-        $otp = rand(100000, 999999);
-        User_Otp::create([
-            "otp" => $otp,
-            "user_id" => $this->id,
+    public function createOtp($token)
+    {
+        User_Otp::where("user_id", $this->getKey())->delete();
+
+        $new_otp = rand(100000, 999999);
+        $user_otp = User_Otp::create([
+            "otp" => $new_otp,
+            "token" => hash('sha256', $token),
+            "user_id" => $this->getKey(),
             "expire_at" => now()->addMinutes((int)env("OTP_MINUTES_EXPIRED", 1))
         ]);
 
+        return $user_otp;
+    }
+
+    public function sendOtp($otp)
+    {
         $details = ["email" => $this->email, "otp" => $otp];
-        // SendOtpJob::dispatch($details);
+        SendOtpJob::dispatch($details);
+    }
+
+    public function verifyOtp($otp)
+    {
+        $user_otp = $this->getOtp;
+        if ($user_otp->otp != $otp) {
+            return [false, array(
+                'type' => 'handle',
+            )];
+        }
+
+        if (now()->gt($user_otp->expire_at)) {
+            return [false, array(
+                'type' => 'handle',
+                'url' => route("login.render")
+            )];
+        }
+
+        $user_otp->delete();
+
+        if (!$this->email_verified_at) {
+            $this->update([
+                'email_verified_at' => now()
+            ]);
+        }
+
+        return [true, null];
+    }
+
+    public function resendOtp()
+    {
+        $user_otp = $this->getOtp;
+        $new_otp = rand(100000, 999999);
+
+        $user_otp->update([
+            "expire_at" => now()->addMinutes((int)env("OTP_MINUTES_EXPIRED", 1)),
+            "otp" => $new_otp,
+        ]);
+
+        $this->sendOtp($new_otp);
+
+        return $user_otp;
     }
 }

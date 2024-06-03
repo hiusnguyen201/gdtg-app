@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('user_otp', function (Blueprint $table) {
             $table->id();
             $table->string('otp', 15);
+            $table->string('token', 64);
             $table->foreignId("user_id")->references("id")->on("users");
             $table->timestamp("expire_at");
             $table->timestamps();
