@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use App\Rules\ExistTokenOtp;
 
 class ResendOtpRequest extends FormRequest
 {
@@ -24,22 +25,20 @@ class ResendOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "userId" => "required|integer|min:1",
+            "token" => ["required", new ExistTokenOtp]
         ];
     }
     public function messages()
     {
         return [
-            "userId.required" => ":attribute không được để trống",
-            "userId.integer" => ":attribute không tìm thấy",
-            "userId.min" => ":attribute không tìm thấy",
+            "token.required" => ":attribute không được để trống"
         ];
     }
 
     public function attributes()
     {
         return [
-            "userId" => "Người dùng",
+            "token" => "Token"
         ];
     }
 

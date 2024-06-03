@@ -35,43 +35,29 @@ $("#btnLocalLogin").on("click", function (e) {
             password: $("input[name='password'").val(),
         },
         success: function (response) {
-            const { type, msg, url, data } = response;
-            switch (type) {
-                case "verify":
-                    localStorage.setItem("userData", JSON.stringify(data));
-                    Swal.fire("Warning!", msg, "warning");
-                    setTimeout(() => {
-                        location.href = url;
-                    }, 2000);
-                    break;
-                default:
-                    Swal.fire("Successful!", msg, "success");
-                    setTimeout(() => {
-                        location.href = location.origin;
-                    }, 2000);
-                    break;
-            }
-
-            $("#btnLogin").html("Đăng Nhập bằng email").prop("disabled", false);
+            const { msg, url } = response;
+            Swal.fire("Success!", msg, "success");
+            setTimeout(() => {
+                location.href = url;
+            }, 1000);
         },
         error: function (response) {
-            console.log(response);
             const { type, msg } = response.responseJSON;
+            console.log(response.responseJSON);
             switch (type) {
                 case "validate":
-                    /**
-                     * Description: This is not use alert
-                     * showErrValidate($("#loginForm"), msg);
-                     */
-
                     Swal.fire("Failure!", Object.values(msg)[0][0], "error");
                     break;
                 default:
                     Swal.fire("Failure!", msg, "error");
                     break;
             }
-
-            $("#btnLogin").html("Đăng Nhập bằng email").prop("disabled", false);
         },
     });
+
+    setTimeout(() => {
+        $("#btnLocalLogin")
+            .html("Đăng Nhập bằng email")
+            .prop("disabled", false);
+    }, 500);
 });

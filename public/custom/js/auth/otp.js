@@ -1,8 +1,9 @@
-const userData = JSON.parse(localStorage.getItem("userData"));
-
 /**
- * verifyOtp
+ * Verify Otp
  */
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get("token");
+
 $("#btnSendOtp").on("click", function (e) {
     e.preventDefault();
 
@@ -10,34 +11,33 @@ $("#btnSendOtp").on("click", function (e) {
         .html('<i class="fa fa-spinner fa-spin"></i> Đang xử lý...')
         .prop("disabled", true);
 
-    const userData = JSON.parse(localStorage.getItem("userData"));
     $.ajax({
         url: `${location.origin}/api/v1/verify-otp`,
         method: "POST",
         dataType: "JSON",
         data: {
             otp: $("input[name='otp']").val(),
-            userId: userData.id,
+            token: token,
         },
         success: function (response) {
-            const { type, msg, data } = response;
+            const { type, msg, url } = response;
             switch (type) {
                 case "verify":
                     Swal.fire("Warning!", msg, "warning");
                     setTimeout(() => {
-                        location.href = data.url;
-                    }, 2000);
+                        location.href = url;
+                    }, 1000);
                     break;
                 default:
                     Swal.fire("Successful!", msg, "success");
                     setTimeout(() => {
                         location.href = location.origin;
-                    }, 2000);
+                    }, 1000);
                     break;
             }
         },
         error: function (response) {
-            const { type, msg } = response.responseJSON;
+            const { type, msg, url } = response.responseJSON;
             console.log(response);
 
             switch (type) {
@@ -48,6 +48,12 @@ $("#btnSendOtp").on("click", function (e) {
                      */
 
                     Swal.fire("Failure!", Object.values(msg)[0][0], "error");
+                    break;
+                case "expire":
+                    Swal.fire("Failure!", msg, "error");
+                    setTimeout(() => {
+                        location.href = url;
+                    }, 1000);
                     break;
                 default:
                     Swal.fire("Failure!", msg, "error");
@@ -60,9 +66,8 @@ $("#btnSendOtp").on("click", function (e) {
 });
 
 /**
- * resendOtp
+ * Resend Otp
  */
-
 var countdownNum = 30;
 $("#btnResendOtp").on("click", function (e) {
     e.preventDefault();
@@ -74,13 +79,12 @@ $("#btnResendOtp").on("click", function (e) {
         countdownNum = 30;
     }, 1000 * countdownNum);
 
-    const userData = JSON.parse(localStorage.getItem("userData"));
     $.ajax({
         url: `${location.origin}/api/v1/resend-otp`,
         method: "POST",
         dataType: "JSON",
         data: {
-            userId: userData.id,
+            token: token,
         },
         success: function (response) {
             const { msg } = response;
@@ -88,13 +92,9 @@ $("#btnResendOtp").on("click", function (e) {
         },
         error: function (response) {
             const { type, msg } = response.responseJSON;
+            console.log(response.responseJSON);
             switch (type) {
                 case "validate":
-                    /**
-                     * Description: This is not use alert
-                     * showErrValidate($("#loginForm"), msg);
-                     */
-
                     Swal.fire("Failure!", Object.values(msg)[0][0], "error");
                     break;
                 default:
@@ -104,7 +104,9 @@ $("#btnResendOtp").on("click", function (e) {
         },
     });
 
-    $("#btnOtpForm").html("Xác nhận").prop("disabled", false);
+    setTimeout(() => {
+        $("#btnOtpForm").html("Xác nhận").prop("disabled", false);
+    }, 500);
 });
 
 function handleCountdown() {

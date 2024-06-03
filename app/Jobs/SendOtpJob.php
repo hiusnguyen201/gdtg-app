@@ -29,7 +29,6 @@ class SendOtpJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $otpMail = new TwoFaMail($this->details);
-        Mail::to($this->details['email'])->send($otpMail);
+        Mail::to($this->details['email'])->send(new TwoFaMail($this->details));
     }
 }

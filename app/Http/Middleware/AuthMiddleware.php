@@ -4,9 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpFoundation\Response;
-
-use App\Models\User;
 
 class AuthMiddleware
 {
@@ -17,19 +16,16 @@ class AuthMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!isset($_COOKIE['user'])) return redirect()->route("login.render");
-
+        if (!isset($_COOKIE['token'])) return redirect()->route("login.render");
         try {
-            $id = decrypt($_COOKIE['user']);
-            $user = User::find($id);
+            $tokenFull = decrypt($_COOKIE['token']);
+            $personalAccessToken = PersonalAccessToken::findToken($tokenFull);
 
-            if (!$user) {
-                throw new \Exception("User not found");
-            }
+            if (!$personalAccessToken) throw new \Exception("Token not found");
 
             return $next($request);
         } catch (\Exception $e) {
-            setcookie('user', '', -1, '/');
+            setcookie('token', '', -1, '/');
             return redirect()->route("login.render");
         }
     }

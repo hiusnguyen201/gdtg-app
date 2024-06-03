@@ -5,26 +5,24 @@ use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\GuestMiddleware;
-use App\Http\Middleware\TokenMiddleware;
 
 Route::middleware(GuestMiddleware::class)->group(function () {
     Route::get("/login", [AuthController::class, "loginPage"])->name("login.render");
     Route::get("/register", [AuthController::class, "registerPage"])->name("register.render");
-});
 
-Route::prefix("otp")->middleware([AuthMiddleware::class])->group(function () {
-    Route::get("/", [AuthController::class, "otpPage"])->name("otp.render");
+    Route::get("/otp", [AuthController::class, "otpPage"])->name("otp.render");
 });
 
 Route::get("/", [HomeController::class, "homePage"])->name("home.render");
+Route::get("/logout", [HomeController::class, "logout"])->name("logout");
 
-Route::middleware([TokenMiddleware::class])->group(function () {
+Route::middleware([AuthMiddleware::class])->group(function () {
     Route::get("/buyer-create", [HomeController::class, "buyerCreatePage"])->name("buyerCreate.render");
     Route::get("/seller-create", [HomeController::class, "sellerCreatePage"])->name("sellerCreate.render");
 });
 
 /*
-    $phone = "+84383460015";                                qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq`
+    $phone = "+84383460015";
 
 $curl = curl_init();
 curl_setopt_array($curl, array(
