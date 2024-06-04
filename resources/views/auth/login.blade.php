@@ -5,7 +5,7 @@
         <div class="overlay-gradient t50">
             <div class="center-y relative">
                 <div class="container">
-                    <div class="login-box box-rounded padding40" data-bgcolor="#ffffff">
+                    <div class="form-box box-rounded padding40" data-bgcolor="#ffffff">
                         <h3 class="mb10 text-center">Đăng nhập</h3>
                         <p>
                             Đăng nhập bằng tài khoản đã có hoặc tạo tài khoản mới

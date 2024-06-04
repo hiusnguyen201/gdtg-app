@@ -6,6 +6,11 @@ html.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     position: relative;
 }
 
+body,
+.modal {
+    padding-right: 0 !important;
+}
+
 .ml-18 {
     margin-left: 18px;
 }
@@ -13,6 +18,10 @@ html.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 .bank-image {
     width: 70px;
     height: 70px;
+}
+
+.box-url {
+    text-align: start;
 }
 
 .btn-google,
@@ -83,11 +92,27 @@ html.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     transform: translateY(-50%);
 }
 
+.form-border input {
+    padding: 8px;
+    margin-bottom: 20px;
+    border: none;
+    border: solid 1px #dddddd;
+    background: none;
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    height: auto;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    color: #333;
+}
+
 .password-block i:hover {
     color: #8364e2;
 }
 
-.login-box {
+.form-box {
     margin: 0 auto;
 }
 
@@ -101,7 +126,7 @@ a.disabled {
 }
 
 @media only screen and (min-width: 1024px) {
-    .login-box {
+    .form-box {
         max-width: 500px;
     }
 }

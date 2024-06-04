@@ -34,7 +34,7 @@
                                 <a href="#">Nạp tiền<span></span></a>
                             </li>
                             <li>
-                                <a href="#">Rút tiền<span></span></a>
+                                <a href="{{ route('topup.render') }}">Rút tiền<span></span></a>
                             </li>
                             <li>
                                 @if (!auth()->check())

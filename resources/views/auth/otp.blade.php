@@ -5,7 +5,7 @@
         <div class="overlay-gradient t50">
             <div class="center-y relative">
                 <div class="container">
-                    <div class="login-box box-rounded padding40" data-bgcolor="#ffffff">
+                    <div class="form-box box-rounded padding40" data-bgcolor="#ffffff">
                         <h3 class="mb10 text-center">Xác thực mã OTP</h3>
                         <p class="mb-3">
                             Vui lòng nhập mã số chúng tôi gửi cho bạn qua email. Mã xác thực có giá trị trong
