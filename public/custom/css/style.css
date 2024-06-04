@@ -10,6 +10,11 @@ html.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
     margin-left: 18px;
 }
 
+.bank-image {
+    width: 70px;
+    height: 70px;
+}
+
 .btn-google,
 .btn-facebook {
     display: flex;
