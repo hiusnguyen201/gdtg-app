@@ -1,18 +1,8 @@
 @extends('layouts.client.index')
 @section('content')
-    <section id="subheader" class="text-light" data-bgimage="url(gigaland-nft/images/background/subheader.jpg) top">
-        <div class="center-y relative text-center">
-            <div class="container">
-                <div class="row">
-
-                    <div class="col-md-12 text-center">
-                        <h1>Tạo giao dịch bán</h1>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @include('layouts.client.parts.breadcrumb', [
+        'title' => 'Tạo giao dịch bán',
+    ])
 
     <section aria-label="section">
         <div class="container">

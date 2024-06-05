@@ -39,4 +39,9 @@ class HomeController extends Controller
     {
         return view("client.sellerCreate");
     }
+
+    public function depositPage()
+    {
+        return view("client.deposit");
+    }
 }

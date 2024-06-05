@@ -17,6 +17,8 @@ Route::get("/", [HomeController::class, "homePage"])->name("home.render");
 Route::get("/logout", [HomeController::class, "logout"])->name("logout");
 
 Route::middleware([AuthMiddleware::class])->group(function () {
+    Route::get("/deposit", [HomeController::class, "depositPage"])->name("deposit.render");
+    // Route::get("/withdrawal", [HomeController::class, "withdrawalPage"])->name("withdrawal.render");
     Route::get("/buyer-create", [HomeController::class, "buyerCreatePage"])->name("buyerCreate.render");
     Route::get("/seller-create", [HomeController::class, "sellerCreatePage"])->name("sellerCreate.render");
 });

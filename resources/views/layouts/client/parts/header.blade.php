@@ -31,21 +31,31 @@
                                 <a href="/buyer-create">Tạo GD mua<span></span></a>
                             </li>
                             <li>
-                                <a href="#">Nạp tiền<span></span></a>
+                                <a href="{{ route('deposit.render') }}">Nạp tiền<span></span></a>
                             </li>
                             <li>
                                 <a href="#">Rút tiền<span></span></a>
                             </li>
-                            <li>
-                                @if (!auth()->check())
+                            @if (!auth()->check())
+                                <li>
                                     <a href="{{ route('login.render') }}" class="ml-18 btn-main">Đăng
                                         nhập</a>
-                                @else
-                                    <a href="{{ route('logout') }}" class="ml-18 btn-main">Đăng
-                                        xuất</a>
-                                @endif
+                                </li>
+                            @else
+                                <li class="menu-item-has-children has-child">
+                                    <a href="javascript:void(0)"><i class="fa fa-user-circle"></i>
+                                        {{ auth()->user()->name }}<span></span></a><span></span>
+                                    <ul>
+                                        <li class="nohover"><span class="balance-number">Số dư<b
+                                                    class="d-block">{{ auth()->user()->balance }}</b></span>
+                                        </li>
+                                        <li><a href="icons-elegant.html">Quản lý tài khoản</a></li>
+                                        <li><a href="{{ route('logout') }}">Đăng
+                                                xuất</a></li>
+                                    </ul>
+                                </li>
+                            @endif
 
-                            </li>
                         </ul>
                         <div class="menu_side_area d-flex align-items-center">
                             <span id="menu-btn"></span>
