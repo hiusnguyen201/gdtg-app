@@ -14,10 +14,6 @@
     <!-- CSS Files
     ================================================== -->
     <link id="bootstrap" href="{{ asset('gigaland-nft/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-    <link id="bootstrap-grid" href="{{ asset('gigaland-nft/css/bootstrap-grid.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link id="bootstrap-reboot" href="{{ asset('gigaland-nft/css/bootstrap-reboot.min.css') }}" rel="stylesheet"
-        type="text/css" />
     <link href="{{ asset('gigaland-nft/css/animate.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('gigaland-nft/css/owl.carousel.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('gigaland-nft/css/owl.theme.css') }}" rel="stylesheet" type="text/css" />
@@ -26,8 +22,7 @@
     <link href="{{ asset('gigaland-nft/css/jquery.countdown.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('gigaland-nft/css/style.css') }}" rel="stylesheet" type="text/css" />
     <!-- color scheme -->
-    <link id="colors" href="{{ asset('gigaland-nft/css/colors/scheme-01.css') }}" rel="stylesheet"
-        type="text/css" />
+    <link id="colors" href="{{ asset('gigaland-nft/css/colors/scheme-01.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('gigaland-nft/css/coloring.css') }}" rel="stylesheet" type="text/css" />
 
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css" rel="stylesheet">
