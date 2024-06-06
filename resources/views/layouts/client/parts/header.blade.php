@@ -46,8 +46,14 @@
                                     <a href="javascript:void(0)"><i class="fa fa-user-circle"></i>
                                         {{ auth()->user()->name }}<span></span></a><span></span>
                                     <ul>
-                                        <li class="nohover"><span class="balance-number">Số dư<b
-                                                    class="d-block">{{ auth()->user()->balance }}</b></span>
+                                        <li class="nohover">
+                                            <span class="balance-amount d-block">
+                                                <span>Số dư tài khoản</span>
+                                                <br>
+                                                <b>@convertCurrency(auth()->user()->balance)</b>
+                                                <a href="{{ route('deposit.render') }}"><i
+                                                        class="fa fa-plus-circle"></i></a>
+                                            </span>
                                         </li>
                                         <li><a href="icons-elegant.html">Quản lý tài khoản</a></li>
                                         <li><a href="{{ route('logout') }}">Đăng

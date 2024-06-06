@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sanctum\PersonalAccessToken;
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Payment_Method;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -42,6 +43,9 @@ class HomeController extends Controller
 
     public function depositPage()
     {
-        return view("client.deposit");
+        $payment_methods = Payment_Method::all();
+        return view("client.deposit", [
+            "payment_methods" => $payment_methods
+        ]);
     }
 }

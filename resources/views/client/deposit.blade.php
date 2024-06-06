@@ -6,32 +6,33 @@
     ])
 
     <section aria-label="section">
-        <div class="container bankingMethod-container">
-            <div class="box-url nohover">
-                <label for="bankingMethod1" class="box-bankingMethod">
-                    <input hidden type="radio" id="bankingMethod1" name="bankingMethod" value="1">
-                    <img src="{{ asset('custom/images/banks/momo-logo.png') }}" alt="" class="bank-image">
-                    <div class="ml20">
-                        <h4>Thanh toán bằng Momo</h4>
-                        <p>Nạp tiền tự động liên kết với Momo, hoàn thành tức thì. Phí 5%</p>
+        <div class="container paymentMethod-container">
+            @if (isset($payment_methods) && count($payment_methods))
+                @foreach ($payment_methods as $method)
+                    <div class="box-url nohover">
+                        <label for="{{ $method->name }}" class="box-paymentMethod">
+                            <input hidden type="radio" id="{{ $method->name }}" name="paymentMethod"
+                                value="{{ $method->id }}">
+                            <div class="paymentMethod-title">
+                                <img id="paymentMethod-logo" src="{{ asset("$method->logo") }}" alt="{{ $method->name }}"
+                                    class="bank-image">
+                                <div class="ml20">
+                                    <h4>Thanh toán bằng {{ $method->name }}</h4>
+                                    <p class="mb-0">{{ $method->description }}</p>
+                                </div>
+                            </div>
+                        </label>
                     </div>
-                </label>
-            </div>
+                @endforeach
+            @endif
 
-            <div class="box-url nohover">
-                <label for="bankingMethod2" class="box-bankingMethod">
-                    <input hidden type="radio" id="bankingMethod2" name="bankingMethod" value="2">
-                    <img src="{{ asset('custom/images/banks/vnpay-logo.png') }}" alt="" class="bank-image">
-                    <div class="ms-3">
-                        <h4>Thanh toán VNPAY-QR</h4>
-                        <p>Quét mã QR PAY trên ứng dụng Mobile Banking, phí giao dịch 2%</p>
-                    </div>
-                </label>
-            </div>
+            <button hidden type="button" id="btnModalDeposit" data-bs-toggle="modal"
+                data-bs-target="#modalDeposit"></button>
         </div>
     </section>
 @endsection
 
 @section('javascript')
+    <script src="{{ asset('qrcode-master/qrcode.min.js') }}"></script>
     <script src="{{ asset('custom/js/deposit.js') }}"></script>
 @endsection

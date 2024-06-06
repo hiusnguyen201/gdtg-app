@@ -25,6 +25,9 @@
     <link id="colors" href="{{ asset('gigaland-nft/css/colors/scheme-01.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('gigaland-nft/css/coloring.css') }}" rel="stylesheet" type="text/css" />
 
+    <!-- Toastify -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <!-- Sweetalert -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.min.css" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('custom/css/style.css') }}">
@@ -68,6 +71,9 @@
     <script src="{{ asset('gigaland-nft/js/particles.js') }}"></script>
     <script src="{{ asset('gigaland-nft/js/particles-settings-2.js') }}"></script>
 
+    <!-- Toastify -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <!-- Sweetalert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
 
     <script>
@@ -80,6 +86,13 @@
                     parent.after(`<span class='error-message'>${errors[key][0]}</span>`);
                 }
             });
+        }
+
+        function convertCurrency(amount) {
+            return amount.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+            })
         }
     </script>
 

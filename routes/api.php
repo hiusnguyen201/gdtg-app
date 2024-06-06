@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\TransactionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -16,6 +17,7 @@ Route::prefix("v1")->middleware('api')->group(function () {
     Route::post("/verify-otp", [LoginController::class, 'verifyOtp']);
     Route::post("/resend-otp", [LoginController::class, 'resendOtp']);
     Route::post("/register", [RegisterController::class, 'register']);
+    Route::post("/deposit", [TransactionController::class, 'deposit']);
 
     Route::prefix("users")->group(function () {
         Route::get("/{id}", [UserController::class, 'show']);
